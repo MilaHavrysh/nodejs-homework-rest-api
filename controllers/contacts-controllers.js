@@ -1,14 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const Contacts = require("../../model/index");
-const {
-  validateCreateContact,
-  validateUpdateContact,
-  validateUpdateStatus,
-} = require("./validations");
+const Contacts = require("../model/index");
 
-router.get("/", async (req, res, next) => {
+const listContactsContr = async (req, res, next) => {
   try {
+    console.log(req.user);
     const contacts = await Contacts.listContacts();
     return res
       .status(200)
@@ -16,9 +10,9 @@ router.get("/", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.get("/:contactId", async (req, res, next) => {
+const getContactByIdContr = async (req, res, next) => {
   try {
     const contact = await Contacts.getContactById(req.params.contactId);
     if (contact) {
@@ -32,9 +26,9 @@ router.get("/:contactId", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post("/", validateCreateContact, async (req, res, next) => {
+const addContactContr = async (req, res, next) => {
   try {
     const contact = await Contacts.addContact(req.body);
     return res
@@ -43,9 +37,9 @@ router.post("/", validateCreateContact, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.delete("/:contactId", async (req, res, next) => {
+const removeContactContr = async (req, res, next) => {
   try {
     const contact = await Contacts.removeContact(req.params.contactId);
     if (contact) {
@@ -59,9 +53,9 @@ router.delete("/:contactId", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.put("/:contactId", validateUpdateContact, async (req, res, next) => {
+const updateContactContr = async (req, res, next) => {
   try {
     const contact = await Contacts.updateContact(
       req.params.contactId,
@@ -78,31 +72,34 @@ router.put("/:contactId", validateUpdateContact, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.patch(
-  "/:contactId/favorite",
-  validateUpdateStatus,
-  async (req, res, next) => {
-    try {
-      const contact = await Contacts.updateStatusContact(
-        req.params.contactId,
-        req.body
-      );
-      if (contact) {
-        return res
-          .status(200)
-          .json({ status: "succsess", code: 200, data: { contact } });
-      }
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        message: "Not found",
-      });
-    } catch (error) {
-      next(error);
+const updateStatusContactContr = async (req, res, next) => {
+  try {
+    const contact = await Contacts.updateStatusContact(
+      req.params.contactId,
+      req.body
+    );
+    if (contact) {
+      return res
+        .status(200)
+        .json({ status: "succsess", code: 200, data: { contact } });
     }
+    return res.status(404).json({
+      status: "error",
+      code: 404,
+      message: "Not found",
+    });
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-module.exports = router;
+module.exports = {
+  listContactsContr,
+  getContactByIdContr,
+  addContactContr,
+  removeContactContr,
+  updateContactContr,
+  updateStatusContactContr,
+};
