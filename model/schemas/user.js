@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const {Enam}=require('../../helpers/constants')
+const gravatar = require('gravatar');
 const bcrypt=require('bcryptjs')
 
 
@@ -26,6 +27,12 @@ const userSchema = new Schema({
         token: {
           type: String,
           default: null,
+        },
+        avatarURL:{
+          type:String,
+          default:function(){
+            return gravatar.url(this.email, {s:250}, true)
+          },
         },
         
       });
